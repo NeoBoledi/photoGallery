@@ -1,7 +1,22 @@
 import React from 'react';
-import { FaFacebookF, FaGoogle, FaUnlockAlt, FaUserAlt, FaUserCircle } from 'react-icons/fa';
+import { FaEnvelopeOpen, FaGoogle, FaPhoneAlt, FaUnlockAlt, FaUserAlt, FaUserCircle } from 'react-icons/fa';
+import { GoogleAuthProvider, getAuth, signInWithPopup } from "firebase/auth";
+import app from "../config/firebase-config"
 
 function Registration() {
+  const provider = new GoogleAuthProvider();
+  const auth = getAuth();
+
+  const signInWithGoogle=()=>{
+   signInWithPopup(auth, provider)
+  .then((result) => {
+    const user = result.user;
+   console.log(user);
+  }).catch((error) => {
+    const errorCode = error.code;
+    console.log(errorCode)
+  });
+  }
   return (
     <section className='login' id='login'>
       <div>
@@ -17,7 +32,13 @@ function Registration() {
                   <div className="input-group-prepend">
                     <span className="input-group-text"><FaUserAlt className='text-red-500 h-12 ml-2 absolute'/></span>
                   </div>
-                  <input type="text" className="form-control h-10 w-full pl-12" placeholder="Username" />
+                  <input type="text" className="form-control h-10 w-full pl-12" placeholder="Full Name" />
+                </div>
+                <div className="input-group mb-3 flex">
+                  <div className="input-group-prepend">
+                    <span className="input-group-text"><FaEnvelopeOpen className='text-red-500 h-12 ml-2 absolute'/></span>
+                  </div>
+                  <input type="text" className="form-control h-10 w-full pl-12" placeholder="Email" />
                 </div>
                 <div className="input-group mb-3 flex">
                   <div className="input-group-prepend">
@@ -25,13 +46,18 @@ function Registration() {
                   </div>
                   <input type="text" className="form-control h-10 w-full pl-12" placeholder="Password" />
                 </div>
+                <div className="input-group mb-3 flex">
+                  <div className="input-group-prepend">
+                    <span className="input-group-text"><FaPhoneAlt className='text-red-500 h-12 ml-2 absolute'/></span>
+                  </div>
+                  <input type="text" className="form-control h-10 w-full pl-12" placeholder="Phone No." />
+                </div>
                 <button type="button" className="btn btn-primary w-full inline-block mt-2 px-4 py-2 mb-8 bg-red-500 text-white self-center">CREATE ACCOUNT</button>
                 <p className='text-white text-center mb-8'>OR</p>
 
                 <div className="flex justify-center items-center">
-            <a href="/" className='bg-red-500 p-3 rounded-full cursor-pointer hover:bg-red-600 mr-8'><FaFacebookF className='text-gray-900'/></a>
-            <a href="/" className='bg-red-500 p-3 rounded-full cursor-pointer hover:bg-red-600'><FaGoogle className='text-gray-900'/></a>
-          </div>
+                <button onClick={signInWithGoogle} className='btn btn-primary inline-block w-full uppercase text-center mt-2 px-4 py-2 mb-8 bg-transparent border-2 border-red-500 text-white self-center flex justify-center items-center'>Sign up with <FaGoogle className='ml-4'/></button>
+                </div>
               </form>
             </div>
           </div>

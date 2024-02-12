@@ -1,7 +1,22 @@
 import React from 'react';
-import { FaUnlockAlt, FaUserAlt, FaUserCircle } from 'react-icons/fa';
+import { FaGoogle, FaUnlockAlt, FaUserAlt, FaUserCircle } from 'react-icons/fa';
+import { GoogleAuthProvider, getAuth, signInWithPopup } from "firebase/auth";
+import app  from "../config/firebase-config"
 
 function Login() {
+  const provider = new GoogleAuthProvider();
+  const auth = getAuth(app);
+
+  const signInWithGoogle=()=>{
+   signInWithPopup(auth, provider)
+  .then((result) => {
+    const user = result.user;
+   console.log(user);
+  }).catch((error) => {
+    const errorCode = error.code;
+    console.log(errorCode)
+  });
+  }
   return (
     <section className='login' id='login'>
       <div>
@@ -33,6 +48,7 @@ function Login() {
               </form>
               <div className="">
                 <p className='text-gray-600 text-center'>Or</p>
+                <button onClick={signInWithGoogle} className='btn btn-primary inline-block w-full uppercase text-center mt-2 px-4 py-2 mb-8 bg-transparent border-2 border-red-500 text-white self-center flex justify-center items-center'>Sign in with <FaGoogle className='ml-4'/></button>
                 <a href="/register" className='btn btn-primary inline-block w-full uppercase text-center mt-2 px-4 py-2 mb-8 bg-red-500 text-white self-center'>Create Account</a>
               </div>
             </div>

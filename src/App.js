@@ -6,6 +6,8 @@ import Services from "./components/Services";
 import Contact from "./components/Contact";
 import Testimonial from "./components/Testimonial";
 import Project from "./components/Project";
+import Login from "./components/Login";
+import Registration from "./components/Registration";
 
 function App() {
   return (
@@ -13,6 +15,8 @@ function App() {
     <>
     <Navbar/>
     <Home/>
+    <Login/>
+    <Registration/>
     <About/>
     <Services/>
     <Project/>
