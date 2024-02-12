@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import { FaInstagram, FaTiktok, FaTwitter, FaBars, FaTimes, FaFacebookF } from 'react-icons/fa';
+import Login from './Login'
 
 function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
@@ -26,13 +27,14 @@ function Navbar() {
             <li><a href="#service" className="block px-4 py-2 text-gray-700 hover:text-gray-900">Service</a></li>
             <li><a href="#project" className="block px-4 py-2 text-gray-700 hover:text-gray-900">Project</a></li>
             <li><a href="#contact" className="block px-4 py-2 text-gray-700 hover:text-gray-900">Contact</a></li>
-
+        
             <div className='flex justify-center items-center gap-4 mt-0'>
              <a href='#home' className='bg-red-500 p-3 rounded-full cursor-pointer hover:bg-red-600'><FaFacebookF/></a>
              <a href='#home' className='bg-red-500 p-3 rounded-full cursor-pointer hover:bg-red-600'><FaTwitter/></a>
              <a href='#home' className='bg-red-500 p-3 rounded-full cursor-pointer hover:bg-red-600'><FaInstagram/></a>
              <a href='#home' className='bg-red-500 p-3 rounded-full cursor-pointer hover:bg-red-600'><FaTiktok/></a>
           </div>
+          <li><a href="/login" className="uppercase bg-red-500 text-white ml-12 px-4 py-3 w-full hover:bg-red-400">Admin</a></li>
 
             <label htmlFor="check" className="close-menu cursor-pointer"><FaTimes className="w-6 h-6 text-gray-700 hover:text-gray-900" /></label>
           </span>
