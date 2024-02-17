@@ -4,52 +4,52 @@ import { getStorage, ref, uploadBytes, getDownloadURL } from "@firebase/storage"
 import db from  '../config/firebase-config'
 import { FaTimesCircle } from 'react-icons/fa';
 
-function HomeDetails() {
+function ProjectForm() {
   const [data, setData] = useState({
-    heading: "",
-    slogan: "",
+    title: "",
     description: "",
+    event: "",
     imageurl: null,
   });
   const [loading, setLoading] = useState(false);
   const [error, setError] = useState(null);
   const [editing, setEditing] = useState(false);
   const [editId, setEditId] = useState(null);
-  const [home, setHome] = useState([]);
+  const [project, setProject] = useState([]);
   const [isModalOpen, setIsModalOpen] = useState(false);
 
   useEffect(() => {
     if (editing && editId) {
-      const fetchHome = async () => {
+      const fetchProject = async () => {
         try {
-          const homeDocRef = doc(db, "Home", editId);
-          const homeDocSnap = await getDocs(homeDocRef);
+          const projectDocRef = doc(db, "Project", editId);
+          const projectDocSnap = await getDocs(projectDocRef);
 
-          if (homeDocSnap.exists()) {
-            const existingData = homeDocSnap.data();
+          if (projectDocSnap.exists()) {
+            const existingData = projectDocSnap.data();
             setData(existingData);
           } else {
             console.log("No such document!");
           }
         } catch (error) {
-          console.error("Error fetching home item data: ", error);
+          console.error("Error fetching project item data: ", error);
         }
       };
 
-      fetchHome();
+      fetchProject();
     }
   }, [editing, editId]);
 
   useEffect(() => {
-    const unsubscribe = onSnapshot(collection(db, "Home"), (snapshot) => {
+    const unsubscribe = onSnapshot(collection(db, "Project"), (snapshot) => {
       const items = [];
       snapshot.forEach((doc) => {
         items.push({ id: doc.id, ...doc.data() });
       });
-      setHome(items);
+      setProject(items);
     }, (error) => {
-      console.error("Error fetching home items: ", error);
-      setError("Error fetching home items. Please try again.");
+      console.error("Error fetching project items: ", error);
+      setError("Error fetching project items. Please try again.");
     });
 
     return () => {
@@ -61,16 +61,16 @@ function HomeDetails() {
     setEditing(true);
     setEditId(id);
 
-    const homeDocRef = doc(db, 'Home', id);
+    const projectDocRef = doc(db, 'Project', id);
 
-    const unsubscribe = onSnapshot(homeDocRef, (docSnapshot) => {
+    const unsubscribe = onSnapshot(projectDocRef, (docSnapshot) => {
       if (docSnapshot.exists()) {
         setData(docSnapshot.data());
       } else {
         console.error('Document does not exist');
       }
     }, (error) => {
-      console.error('Error fetching home item: ', error);
+      console.error('Error fetching project item: ', error);
     });
 
     return () => unsubscribe();
@@ -78,10 +78,10 @@ function HomeDetails() {
 
   const handleDelete = async (id) => {
     try {
-      const homeDocRef = doc(db, "Home", id);
-      await deleteDoc(homeDocRef);
+      const projectDocRef = doc(db, "Project", id);
+      await deleteDoc(projectDocRef);
     } catch (error) {
-      console.error("Error deleting home item: ", error);
+      console.error("Error deleting project item: ", error);
       setError("Error deleting item. Please try again.");
     }
   };
@@ -98,7 +98,7 @@ function HomeDetails() {
   const handleImageUpload = async (imageFile) => {
     try {
       const storage = getStorage();
-      const storageRef = ref(storage, "home/" + Date.now());
+      const storageRef = ref(storage, "project/" + Date.now());
 
       await uploadBytes(storageRef, imageFile);
 
@@ -122,28 +122,28 @@ function HomeDetails() {
         const imageUrl = await handleImageUpload(data.image);
 
         if (editing && editId) {
-          const homeDocRef = doc(db, "Home", editId);
-          await updateDoc(homeDocRef, {
-            heading: data.heading,
-            slogan: data.slogan,
+          const projectDocRef = doc(db, "Project", editId);
+          await updateDoc(projectDocRef, {
+            title: data.title,
             description: data.description,
+            event: data.event,
             imageurl: imageUrl,
           });
         } else {
-          const homeRef = collection(db, "Home");
-          await addDoc(homeRef, {
-            heading: data.heading,
-            slogan: data.slogan,
+          const projectRef = collection(db, "Project");
+          await addDoc(projectRef, {
+            title: data.title,
             description: data.description,
+            event: data.event,
             imageurl: imageUrl,
           });
         }
 
         setData({
-          heading: "",
-    slogan: "",
-    description: "",
-    imageurl: null,
+          title: "",
+          description: "",
+          event: "",
+          imageurl: null,
         });
         setEditing(false);
         setEditId(null);
@@ -166,28 +166,28 @@ function HomeDetails() {
     setIsModalOpen(false);
     setEditing(false); 
     setData({
-      heading: "",
-    slogan: "",
-    description: "",
-    imageurl: null,
+      title: "",
+      description: "",
+      event: "",
+      imageurl: null,
     });
   };
 
   return (
-    <section className='homes' id='homes'>
+    <section className='projects' id='projects'>
       <div className='py-8 px-8 text-black w-full'>
         <div className=''>
         <div className="relative">
-        <button className="btn btn-primary flex justify-center item-center mt-2 px-2 py-2 mb-8 bg-red-500 text-white self-center" onClick={openModal}>Add New Home Item</button>
-           <h1 className="text-4xl font-bold uppercase mb-4 text-center text-gray-900">Our Home</h1>
+        <button className="btn btn-primary flex justify-center item-center mt-2 px-2 py-2 mb-8 bg-red-500 text-white self-center" onClick={openModal}>Add New Project</button>
+           <h1 className="text-4xl font-bold uppercase mb-8 text-center text-gray-900">Our Projects</h1>
         </div>
-          <div className="grid grid-cols-1 md:grid-cols-1 lg:grid-cols-1 gap-4">
-            {home.map((item) => (
+          <div className="grid grid-cols-1 md:grid-cols-4 lg:grid-cols-4 gap-3">
+            {project.map((item) => (
               <div key={item.id} className="bg-white p-4 shadow-2xl">
-                <img src={item.imageurl} alt="project pict" className="w-full  h-50 object-cover mb-4" />
-                <h3 className="text-lg font-semibold mb-2 text-black py-2 px-8">{item.heading}</h3>
-                <p className="mb-2 text-black py-2 px-8">{item.slogan}</p>
+                <img src={item.imageurl} alt="project pict" className="w-full h-50 object-cover mb-4 h-48" />
+                <h3 className="text-lg font-semibold mb-2 text-black py-2 px-8">{item.title}</h3>
                 <p className="mb-2 text-black py-2 px-8">{item.description}</p>
+                <p className="mb-2 text-black py-2 px-8">{item.event}</p>
                 <div className="flex justify-between">
                   <button onClick={() => { handleEdit(item.id); openModal(); }} className="bg-red-500 text-white py-2 px-8 hover:underline focus:outline-none">Edit</button>
                   <button onClick={() => handleDelete(item.id)} className="bg-red-500 text-white py-2 px-8 hover:underline focus:outline-none">Delete</button>
@@ -201,27 +201,28 @@ function HomeDetails() {
           <div className="modal-overlay fixed top-0 left-0 w-full h-full bg-black bg-opacity-50 flex items-center justify-center z-50">
             <div className="modal bg-white p-8 rounded-lg relative z-50">
               <button onClick={closeModal} className="absolute top-2 right-2 text-gray-600"><FaTimesCircle/></button>
-              <form onSubmit={handleSubmit} className="container mx-auto max-w-md p-4  bg-gray-100 border rounded-lg shadow-md relative">
-                <h1 className='text-center font-bold p-4'>{editing ? "UPDATE HOME" : "SUBMIT HOME"}</h1>
+              <form onSubmit={handleSubmit} className="container mx-auto max-w-md p-4 bg-gray-100 border rounded-lg shadow-md relative">
+                <h1 className='text-center font-bold p-4'>{editing ? "UPDATE PROJECT" : "SUBMIT PROJECT"}</h1>
   
                 <div className="mb-4">
                   <label htmlFor="image" className="block text-sm font-medium text-gray-600">Select Image</label>
                   <input id="image" type="file" name="image" onChange={handleImageChange} accept="image/*" required className="mt-1 p-2 w-full border rounded-md focus:outline-none focus:ring focus:border-blue-300" />
                 </div>
                 <div className="mb-4">
-                  <label htmlFor="heading" className="block text-sm font-medium text-gray-600">Heading</label>
-                  <input id="heading" type="text" name="heading" value={data.heading} onChange={handleInputChange} className="mt-1 p-2 w-full border rounded-md focus:outline-none focus:ring focus:border-blue-300" />
+                  <label htmlFor="title" className="block text-sm font-medium text-gray-600">Title</label>
+                  <input id="title" type="text" name="title" value={data.title} onChange={handleInputChange} className="mt-1 p-2 w-full border rounded-md focus:outline-none focus:ring focus:border-blue-300" />
                 </div>
   
-                <div className="mb-4">
-                  <label htmlFor="slogan" className="block text-sm font-medium text-gray-600">Slogan</label>
-                  <input id="slogan" type="text" name="slogan" value={data.slogan} onChange={handleInputChange} className="mt-1 p-2 w-full border rounded-md focus:outline-none focus:ring focus:border-blue-300" />
-                </div>
-
                 <div className="mb-4">
                   <label htmlFor="description" className="block text-sm font-medium text-gray-600">Description</label>
                   <input id="description" type="text" name="description" value={data.description} onChange={handleInputChange} className="mt-1 p-2 w-full border rounded-md focus:outline-none focus:ring focus:border-blue-300" />
                 </div>
+
+                <div className="mb-4">
+                  <label htmlFor="event" className="block text-sm font-medium text-gray-600">Event</label>
+                  <input id="event" type="text" name="event" value={data.event} onChange={handleInputChange} className="mt-1 p-2 w-full border rounded-md focus:outline-none focus:ring focus:border-blue-300" />
+                </div>
+
                 <div>
                   {error && <div className="text-red-500 mb-4">{error}</div>}
                   <button type="submit" className="btn btn-primary inline-block mt-2 px-4 py-2 mb-8 bg-red-500 text-white self-center" disabled={loading}>{loading ? "Submitting..." : editing ? "UPDATE" : "CREATE"}</button>
@@ -236,4 +237,4 @@ function HomeDetails() {
   
 }
 
-export default HomeDetails;
+export default ProjectForm;

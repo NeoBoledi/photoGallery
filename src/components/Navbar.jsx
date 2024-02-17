@@ -1,6 +1,5 @@
 import React, { useState } from 'react';
 import { FaInstagram, FaTiktok, FaTwitter, FaBars, FaTimes, FaFacebookF } from 'react-icons/fa';
-import Login from './Login'
 
 function Navbar() {
   const [isOpen, setIsOpen] = useState(false);
